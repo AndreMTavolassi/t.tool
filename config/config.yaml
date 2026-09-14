@@ -1,0 +1,13 @@
+# Configurações padrão do t.tool
+target: "127.0.0.1"
+output_dir: "output"
+
+wordlists:
+  web: "config/wordlists/common.txt"
+
+nmap:
+  ports: "21,22,80,443,8080"
+  arguments: "-sV -sC -T4"
+
+gobuster:
+  threads: 10
