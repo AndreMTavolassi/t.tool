@@ -1,19 +1,23 @@
 import subprocess
+import shlex
 
-def run_nmap(target, ports, args, output_xml_path):
+def run_nmap(target, ports, arguments, output_file):
     """
-    Executa o Nmap no sistema e salva o resultado em formato XML.
+    Executa o Nmap contra o alvo especificado salvando o resultado em XML.
     """
-    cmd = ["nmap", "-p", str(ports)] + args.split() + ["-oX", output_xml_path, target]
+    # Converte a string de argumentos em uma lista para o subprocess
+    extra_args = shlex.split(arguments)
+    
+    cmd = ["nmap", "-p", str(ports)] + extra_args + ["-oX", output_file, target]
+    
     print(f"[+] Executando Nmap: {' '.join(cmd)}")
     
     try:
-        subprocess.run(cmd, capture_output=True, text=True, check=True)
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
         print("[+] Varredura Nmap concluída com sucesso.")
-        return output_xml_path
-    except FileNotFoundError:
-        print("[-] Erro: 'nmap' não encontrado. Instale com: sudo apt install nmap")
-        return None
+        return result.stdout
     except subprocess.CalledProcessError as e:
-        print(f"[-] Erro ao executar Nmap: {e}")
+        print(f"[-] Erro ao executar o Nmap: {e}")
+        if e.stderr:
+            print(f"[-] Detalhes: {e.stderr}")
         return None
